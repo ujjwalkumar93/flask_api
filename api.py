@@ -10,6 +10,7 @@ db = SQLAlchemy(app)
 
 # creating database schema
 class Student(db.Model):
+    # here db.String(40) is nothing but the data type would be string and maximum length of that string would be 40
     __tablename__='students'
     id=db.Column(db.Integer,primary_key=True)
     fname=db.Column(db.String(40))
