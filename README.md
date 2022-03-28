@@ -5,4 +5,4 @@ $ pipenv shell
 
 # Install dependencies
 $ pipenv install
-python3 api.py
+$python3 api.py
