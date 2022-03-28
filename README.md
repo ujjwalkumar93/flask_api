@@ -5,4 +5,6 @@ $ pipenv shell
 
 # Install dependencies
 $ pipenv install
+
+# run server
 $python3 api.py
