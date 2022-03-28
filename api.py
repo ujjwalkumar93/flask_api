@@ -39,6 +39,7 @@ def all_student():
 
 @app.route('/get_indivisual_student/<id>')
 def indivisual_student(id):
+    # here id is used to fetch the record of indivisual studen
     print(id)
     return jsonify({"msg":"indivisual student record"})
 
