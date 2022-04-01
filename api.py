@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import urllib.parse
+from flask_marshmallow import Marshmallow 
 # Init app
 app = Flask(__name__)
-
+# init ma
+ma = Marshmallow(app)
 # connect to database
 password = urllib.parse.quote("superone@321")
 print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
@@ -25,18 +27,22 @@ class Student(db.Model):
         self.lname=lname
         self.dept=dept
 
+class StudentSchema(ma.Schema):
+  class Meta:
+    fields = ('fname', 'lname', 'dept')
+
+# Init schema to return serialize data
+student_schema = StudentSchema()
 
 @app.route('/add_student')
 def add_student():
     fname = request.json['fname']
     lname = request.json['lname']
     dept = request.json['dept']
-
     student=Student(fname,lname,dept)
-    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.")
     db.session.add(student)
     db.session.commit()
-    return jsonify(student.__dict__)    
+    return student_schema.jsonify(student)    
 
 @app.route('/get_student_list')
 def all_student():
