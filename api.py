@@ -32,7 +32,7 @@ class StudentSchema(ma.Schema):
     fields = ('fname', 'lname', 'dept')
 
 # Init schema to return serialize data
-student_schema = StudentSchema(many=True)
+student_schema = StudentSchema()
 
 @app.route('/add_student')
 def add_student():
@@ -54,10 +54,7 @@ def all_student():
 def indivisual_student(id):
     # here id is used to fetch the record of indivisual studen
     student = Student.query.get(id)
-    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-    print(student.__dict__)
     return student_schema.jsonify(student[0])
-
 
 @app.route('/update_student/<id>',methods=["PUT"])
 def update_student(id):
@@ -73,10 +70,12 @@ def update_student(id):
     db.session.commit()
     return student_schema.jsonify(student)
 
-@app.route('/delete_student/<id>',methods=["PUT"])
+@app.route('/delete_student/<id>',methods=["DELETE"])
 def delete_student(id):
-    print(id)
-    return jsonify({"msg":"student deleted!"})
+    student = Student.query.get(id)
+    db.session.delete(student)
+    db.session.commit()
+    return student_schema.jsonify(student)
 
 
 # Run Server
