@@ -1,3 +1,4 @@
+from crypt import methods
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import urllib.parse
@@ -8,8 +9,7 @@ app = Flask(__name__)
 ma = Marshmallow(app)
 # connect to database
 password = urllib.parse.quote("superone@321")
-print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-print(password)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:ukumar@localhost/flask_db"
 db = SQLAlchemy(app)
 
@@ -32,7 +32,7 @@ class StudentSchema(ma.Schema):
     fields = ('fname', 'lname', 'dept')
 
 # Init schema to return serialize data
-student_schema = StudentSchema()
+student_schema = StudentSchema(many=True)
 
 @app.route('/add_student')
 def add_student():
@@ -46,20 +46,34 @@ def add_student():
 
 @app.route('/get_student_list')
 def all_student():
-    return jsonify({"msg":"student list"})
+    all_students = Student.query.all()
+    result = student_schema.dump(all_students)
+    return jsonify(result)
 
 @app.route('/get_indivisual_student/<id>')
 def indivisual_student(id):
     # here id is used to fetch the record of indivisual studen
-    print(id)
-    return jsonify({"msg":"indivisual student record"})
+    student = Student.query.get(id)
+    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    print(student.__dict__)
+    return student_schema.jsonify(student[0])
 
-@app.route('/update_student/<id>')
+
+@app.route('/update_student/<id>',methods=["PUT"])
 def update_student(id):
-    print(id)
-    return jsonify({"msg":"student updated"})
+    student = Student.query.get(id)
 
-@app.route('/delete_student/<id>')
+    fname = request.json['fname']
+    lname = request.json['lname']
+    dept = request.json['dept']
+    
+    student.fname = fname
+    student.lname = lname
+    student.dept = dept
+    db.session.commit()
+    return student_schema.jsonify(student)
+
+@app.route('/delete_student/<id>',methods=["PUT"])
 def delete_student(id):
     print(id)
     return jsonify({"msg":"student deleted!"})
