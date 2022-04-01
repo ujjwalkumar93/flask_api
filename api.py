@@ -1,17 +1,20 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-
+import urllib.parse
 # Init app
 app = Flask(__name__)
 
 # connect to database
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:'superone@321'@localhost/flask_app_db1"
+password = urllib.parse.quote("superone@321")
+print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+print(password)
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:ukumar@localhost/flask_db"
 db = SQLAlchemy(app)
 
 # creating database schema
 class Student(db.Model):
     # here db.String(40) is nothing but the data type would be string and maximum length of that string would be 40
-    __tablename__='students'
+    #__tablename__='students'
     id=db.Column(db.Integer,primary_key=True)
     fname=db.Column(db.String(40))
     lname=db.Column(db.String(40))
@@ -30,9 +33,10 @@ def add_student():
     dept = request.json['dept']
 
     student=Student(fname,lname,dept)
+    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.")
     db.session.add(student)
     db.session.commit()
-    return jsonify({"msg":"student added"})
+    return jsonify(student.__dict__)    
 
 @app.route('/get_student_list')
 def all_student():
