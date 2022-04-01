@@ -5,3 +5,4 @@
 # to use database   => \c DBNAME
 # to show all table  => \dt
 # to show all rows => TABLE mytablename;
+# to quite => \q
